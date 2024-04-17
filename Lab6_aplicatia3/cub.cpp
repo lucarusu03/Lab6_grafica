@@ -9,11 +9,15 @@
 #include "glu.h"
 #include "glaux.h"
 
+static GLfloat alpha;
+
 void myInit()
 {
 	glClearColor(0.0, 0.0, 0.0, 1.0);
 	glShadeModel(GL_SMOOTH);
 }
+
+
 
 void CALLBACK display()
 {
@@ -23,13 +27,13 @@ void CALLBACK display()
 	glTranslatef(0.0, 0.0, -4.0);
 
 	glColor3f(1.0, 0.0, 0.0);
-	glRotatef(30, 1.0, 1.0, 0.0);
+	glRotatef(alpha, 0.3, 0.2, 0.3);
 
-	//glEnable(GL_CULL_FACE); //activeaza eliminarea fetelor
-	//glCullFace(GL_BACK); //sunt eliminate fetele spate
+	glEnable(GL_CULL_FACE); //activeaza eliminarea fetelor
+	glCullFace(GL_BACK); //sunt eliminate fetele spate
 	//inlocuiti cu GL_FRONT pentru fete fata
-	//glEnable(GL_DEPTH_TEST);
-	
+	glEnable(GL_DEPTH_TEST);
+	glFrontFace(GL_CCW);
 	glBegin(GL_QUAD_STRIP); {
 		glColor3f(1.0f, 0.0f, 1.0f);
 		glVertex3f(-0.5f, 0.5f, 0.5f);
@@ -62,7 +66,7 @@ void CALLBACK display()
 		glVertex3f(-0.5f, -0.5f, 0.5f);
 	}
 	glEnd();
-
+	glFrontFace(GL_CCW);
 	glBegin(GL_QUADS);
 	{
 		glColor3f(1.0f, 0.0f, 1.0f);
@@ -78,7 +82,7 @@ void CALLBACK display()
 		glVertex3f(-0.5f, 0.5f, -0.5f);
 	}
 	glEnd();
-
+	glFrontFace(GL_CW);
 	glBegin(GL_QUADS);
 	{
 		glColor3f(1.0f, 0.0f, 0.0f);
@@ -98,6 +102,14 @@ void CALLBACK display()
 	glFlush();
 }
 
+void CALLBACK IdleFunction(void)
+{
+	alpha += 4;
+	
+	display();
+	Sleep(16);
+}
+
 void CALLBACK myReshape(GLsizei w, GLsizei h)
 {
 	if (!h) return;
@@ -115,6 +127,7 @@ int main(int argc, char** argv)
 	auxInitWindow("CUB");
 	myInit();
 	auxReshapeFunc(myReshape);
+	auxIdleFunc(IdleFunction);
 	auxMainLoop(display);
 	return 0;
 }
